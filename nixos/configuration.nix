@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs,inputs, ... }:
 
 {
   imports =
@@ -40,6 +40,7 @@
     enable = true;
     windowManager.qtile.enable = true;
     displayManager.sessionCommands = ''
+      xrandr --output Virtual-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
       xwallpaper --zoom ~/walls/jk.png
       xet r rate 200 35 &
     '';  
@@ -52,7 +53,9 @@
     fade = true;
   };
 
-  
+
+  services.spice-vdagentd.enable = true;
+
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -80,8 +83,21 @@
         tree
       ];
     };
+  
+
+  home-manager = {
+    extraSpecialArgs = { inherit inputs; };
+    users = {
+      "zsyizh" = import ./home.nix;
+    };
+  };
+
 
   programs.firefox.enable = true;
+
+  # nix flakes
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -100,6 +116,8 @@
     fastfetch
     git
     gh
+    spice-vdagent
+    arandr
   ];
 
 
