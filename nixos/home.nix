@@ -1,6 +1,8 @@
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "zsyizh";
@@ -34,7 +36,34 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+    pkgs.bat
   ];
+
+  programs.bash = {
+    enable = true;
+    shellAliases = {
+      btw = "echo i use nixos btw";
+      nrs = "sudo nixos-rebuild switch --flake /etc/nixos/#nixos --impure";
+      la = "ls -la";
+      ll = "ls -l";
+      cpn = "bash ~/nixos-dotfiles/cp-nix.sh";
+    };
+    initExtra = ''
+      export PS1='\[\e[32m\]\u\[\e[0m\]@\h in \[\e[38;5;32m\]\w\[\e[0m\] \\$ '
+    '';
+  };
+
+  programs.alacritty = {
+    enable = true;
+    settings = {
+      window.opacity = 0.9;
+      font.normal = {
+        family = "JetBrains Mono";
+        style = "Regular";
+      };
+      font.size = 13;
+    };
+  };
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
@@ -49,6 +78,13 @@
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+    ".config/bat/config".text = ''
+      --theme="Nord"
+      --style="numbers,changes,grid"
+      --paging=auto
+    '';
+
+    ".config/qtile".source = /home/zsyizh/nixos-dotfiles/qtile;
   };
 
   # Home Manager can also manage your environment variables through
@@ -68,7 +104,7 @@
   #  /etc/profiles/per-user/zsyizh/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "nvim";
   };
 
   # Let Home Manager install and manage itself.
